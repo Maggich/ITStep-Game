@@ -30,6 +30,14 @@ export default defineConfig(({ mode }) => {
     server: {
       host: '0.0.0.0',
       port: 5173,
+      // Проксируем вызовы API в dev-режиме на бэкенд
+      proxy: {
+        '/api': {
+          target: (rootEnv.VITE_API_BASE_URL || viteEnv.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/$/, ''),
+          changeOrigin: true,
+          secure: false,
+        },
+      },
     },
     define: {
       ...Object.fromEntries(
