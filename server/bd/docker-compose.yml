@@ -17,6 +17,30 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-postgres}
     volumes:
       - db_data:/var/lib/postgresql/data
+  
+  client:
+    build: ../client
+    ports:
+      - "3000:80"  # Клиент на localhost:3000
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  server:
+    build: .
+    ports:
+      - "5000:5000"  # Сервер на localhost:5000
+    volumes:
+      - ./bd:/app/bd  # Монтируем папку bd
+    env_file:
+      - .env  # Подключаем переменные окружения
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   db_data:

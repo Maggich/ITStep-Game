@@ -1,0 +1,41 @@
+﻿services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=postgres
+    ports:
+      - "5438:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  server:
+    build:
+      context: ./server
+      dockerfile: dockerfile
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=1234
+      - DB_NAME=postgres
+      - API_HOST=0.0.0.0
+      - API_PORT=8080
+      - FRONTEND_ORIGIN=http://localhost:80
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  client:
+    build:
+      context: ./client
+      dockerfile: dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+volumes:
+  postgres_data: {}
