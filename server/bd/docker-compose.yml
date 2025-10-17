@@ -1,15 +1,20 @@
+
 version: "3.9"
 
 services:
   db:
     image: maggich/bd_itstep_game:latest
     container_name: BD_ForGame
+    # Подтягиваем переменные из корневого .env (на два уровня выше)
+    env_file:
+      - ../../.env
     ports:
       - "5438:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: postgres
+      # Значения берутся из .env, при отсутствии используются дефолты
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-1234}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
     volumes:
       - db_data:/var/lib/postgresql/data
 
